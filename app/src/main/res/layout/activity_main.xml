@@ -4,14 +4,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".MainActivity">
-    <TextView
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivSongCover"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:foreground="@drawable/gradient_image"
+        app:layout_constraintDimensionRatio="h, 0.90:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent=".75"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/cardview_dark_background"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvSongTitle"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginHorizontal="24dp"
+        android:maxLines="2"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Grace Kelly"
+        app:layout_constraintBottom_toBottomOf="@id/ivSongCover"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvArtistName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:maxLines="2"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSongTitle"
+        tools:text="MIKA" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="dismiss icon"
+        android:src="@drawable/ic_down_arrow_24"
+        app:fabSize="mini"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sliderMusic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tvArtistName"
+        android:layout_marginTop="8dp"
+        tools:value="20"
+        tools:valueTo="100"
+        android:valueFrom="0"
+        app:thumbColor="@color/white"
+        app:trackColorInactive="@color/material_on_primary_disabled"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvStartDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="@id/sliderMusic"
+        app:layout_constraintTop_toBottomOf="@id/sliderMusic"
+        tools:text="00:30" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvStartEnded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@id/sliderMusic"
+        app:layout_constraintTop_toBottomOf="@id/sliderMusic"
+        tools:text="02:30" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivPlayPause"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:srcCompat="@drawable/ic_play_circle_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvStartDuration"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackground"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivPrevious"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/ic_skip_previous_24"
+        app:layout_constraintEnd_toStartOf="@id/ivPlayPause"
+        app:layout_constraintTop_toTopOf="@id/ivPlayPause"
+        app:layout_constraintBottom_toBottomOf="@id/ivPlayPause"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackground"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivNext"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/ic_skip_next_24"
+        app:layout_constraintStart_toEndOf="@id/ivPlayPause"
+        app:layout_constraintTop_toTopOf="@id/ivPlayPause"
+        app:layout_constraintBottom_toBottomOf="@id/ivPlayPause"
+        android:layout_marginStart="16dp"
+        android:background="?attr/selectableItemBackground"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

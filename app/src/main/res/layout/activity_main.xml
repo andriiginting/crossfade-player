@@ -5,20 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivSongCover"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:foreground="@drawable/gradient_image"
         app:layout_constraintDimensionRatio="h, 0.90:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent=".75"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/cardview_dark_background"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/gradientView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/ivSongCover"
+        android:background="@drawable/gradient_image"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSongTitle"
@@ -54,6 +62,10 @@
         android:contentDescription="dismiss icon"
         android:src="@drawable/ic_down_arrow_24"
         app:fabSize="mini"
+        android:backgroundTint="@color/cardview_dark_background"
+        app:borderWidth="0dp"
+        android:tint="@color/white"
+        app:tint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -128,5 +140,15 @@
         app:layout_constraintBottom_toBottomOf="@id/ivPlayPause"
         android:layout_marginStart="16dp"
         android:background="?attr/selectableItemBackground"
+        />
+
+    <include
+        android:id="@+id/footerView"
+        layout="@layout/player_footer_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".HomeActivity"
+    android:padding="16dp">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnExoplayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exoplayer Music"
+        android:textAllCaps="false"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMediaplayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MediaPlayer Music"
+        android:textAllCaps="false"
+        android:layout_marginTop="16dp"
+        />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

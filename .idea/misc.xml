@@ -4,11 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/gradient_image.xml" value="0.3351851851851852" />
+        <entry key="app/src/main/res/layout/activity_exo_crossfade.xml" value="0.3328125" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.3328125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.29444444444444445" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

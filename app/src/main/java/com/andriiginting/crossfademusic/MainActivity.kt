@@ -1,20 +1,17 @@
 package com.andriiginting.crossfademusic
 
 import android.graphics.Color
-import android.media.MediaMetadata
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.andriiginting.crossfademusic.databinding.ActivityMainBinding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.andriiginting.crossfademusic.util.loadImage
+import com.andriiginting.crossfademusic.util.setTransparentSystemBar
 import com.google.android.material.slider.LabelFormatter
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
@@ -40,7 +37,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.onViewCreated()
         handlePlayerController()
         observePlayer()
-        transparentStatusBar()
+        setTransparentSystemBar()
+
+        binding.fabClosePlayer.setOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun handlePlayerController() {
@@ -148,13 +149,6 @@ class MainActivity : AppCompatActivity() {
             e.printStackTrace()
             "00:00"
         }
-    }
-
-    private fun transparentStatusBar() {
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-        window.statusBarColor = Color.TRANSPARENT
     }
 
     private fun startAudioProgress(mediaPlayer: MediaPlayer) {

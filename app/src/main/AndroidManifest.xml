@@ -6,6 +6,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:name=".CrossFadeApp"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CrossfadeMusic">
@@ -20,7 +21,7 @@
         </activity>
         <activity
             android:exported="true"
-            android:name=".ExoCrossfadeActivity" />
+            android:name=".exo.ExoCrossfadeActivity" />
         <activity
             android:exported="true"
             android:name=".MainActivity"/>

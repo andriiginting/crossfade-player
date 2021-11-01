@@ -24,7 +24,7 @@
             android:name=".exo.ExoCrossfadeActivity" />
         <activity
             android:exported="true"
-            android:name=".MainActivity"/>
+            android:name=".mediaplayer.MainActivity"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

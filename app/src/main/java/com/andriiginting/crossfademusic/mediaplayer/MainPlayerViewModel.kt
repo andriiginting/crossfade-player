@@ -1,8 +1,9 @@
-package com.andriiginting.crossfademusic
+package com.andriiginting.crossfademusic.mediaplayer
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.andriiginting.crossfademusic.R
 
 class MainPlayerViewModel : ViewModel() {
     private val playlist = mutableListOf<CrossfadeDataModel>()

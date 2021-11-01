@@ -3,7 +3,7 @@ package com.andriiginting.crossfademusic.util
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import com.andriiginting.crossfademusic.exo.ExoCrossfadeActivity
-import com.andriiginting.crossfademusic.MainActivity
+import com.andriiginting.crossfademusic.mediaplayer.MainActivity
 
 object Navigator {
 

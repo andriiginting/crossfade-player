@@ -1,4 +1,4 @@
-package com.andriiginting.crossfademusic
+package com.andriiginting.crossfademusic.mediaplayer
 
 data class CrossfadeDataModel(
     val title: String,

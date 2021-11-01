@@ -1,14 +1,13 @@
-package com.andriiginting.crossfademusic
+package com.andriiginting.crossfademusic.mediaplayer
 
-import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
+import com.andriiginting.crossfademusic.R
 import com.andriiginting.crossfademusic.databinding.ActivityMainBinding
 import com.andriiginting.crossfademusic.util.loadImage
 import com.andriiginting.crossfademusic.util.setTransparentSystemBar

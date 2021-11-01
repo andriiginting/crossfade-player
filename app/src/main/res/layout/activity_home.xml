@@ -26,4 +26,23 @@
         android:layout_marginTop="16dp"
         />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crossfade durations (1-12 seconds)"
+        android:textColor="@color/white"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="16dp"/>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/crossfadeSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:valueTo="12"
+        android:valueFrom="0"
+        tools:value=""
+        android:stepSize="1"
+        />
+
 </androidx.appcompat.widget.LinearLayoutCompat>

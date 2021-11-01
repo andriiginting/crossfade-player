@@ -63,11 +63,21 @@ class ExoCrossFadeViewModel @Inject constructor(
         currentPosition = playlist.indexOf(data)
     }
 
+    fun autoNextSong(
+        currentDuration: Int,
+        duration: Int,
+        crossfade: Int
+    ) {
+        if (crossfade + currentDuration == duration) {
+            getNextSong()
+        }
+    }
+
     fun getPreviousSong() {
         currentPosition = if ((currentPosition - 1) < 0) playlist.lastIndex else currentPosition - 1
         _state.value = ExoCrossFadeViewState.ExoPreviousSong(playlist[currentPosition])
         _state.value = ExoCrossFadeViewState.ExoFooterView(
-            playlist[currentPosition], playlist[currentPosition+1]
+            playlist[currentPosition], playlist[currentPosition + 1]
         )
     }
 
@@ -84,7 +94,7 @@ class ExoCrossFadeViewModel @Inject constructor(
 
         _state.value = ExoCrossFadeViewState.ExoNextSong(playlist[currentPosition])
         _state.value = ExoCrossFadeViewState.ExoFooterView(
-            playlist[currentPosition], playlist[currentPosition+1]
+            playlist[currentPosition], playlist[currentPosition + 1]
         )
     }
 

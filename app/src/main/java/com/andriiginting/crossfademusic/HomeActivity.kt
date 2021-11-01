@@ -16,7 +16,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnExoplayer.setOnClickListener {
-            Navigator.exoPlayerScreen(this)
+            Navigator.exoPlayerScreen(this, binding.crossfadeSlider.value.toInt())
                 .also(::startActivity)
         }
 

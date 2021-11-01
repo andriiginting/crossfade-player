@@ -9,9 +9,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import com.andriiginting.crossfademusic.R
+import com.andriiginting.crossfademusic.data.CrossFadeClippingData
+import com.andriiginting.crossfademusic.data.player.CrossFadeProvider
 import com.andriiginting.crossfademusic.databinding.ActivityExoCrossfadeBinding
 import com.andriiginting.crossfademusic.domain.MusicPlaylist
-import com.andriiginting.crossfademusic.player.CrossFadeProvider
+import com.andriiginting.crossfademusic.util.Constant
 import com.andriiginting.crossfademusic.util.loadImage
 import com.andriiginting.crossfademusic.util.setTransparentSystemBar
 import com.google.android.exoplayer2.MediaItem
@@ -28,6 +30,8 @@ class ExoCrossfadeActivity : AppCompatActivity() {
 
     private lateinit var exoplayerInstance: SimpleExoPlayer
     private val viewModel: ExoCrossFadeViewModel by viewModels()
+
+    private var crossFadeDuration = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +71,7 @@ class ExoCrossfadeActivity : AppCompatActivity() {
         })
 
         addPlayerListener()
+        observeExtras()
     }
 
     override fun onDestroy() {
@@ -78,6 +83,13 @@ class ExoCrossfadeActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         exoplayerInstance.stop()
+    }
+
+    private fun observeExtras() {
+        crossFadeDuration = intent.getIntExtra(
+            Constant.CROSSFADE_DURATION_EXTRA,
+            Constant.CROSSFADE_DURATION_DEFAULT
+        )
     }
 
     private fun observePlaylist() {
@@ -223,6 +235,11 @@ class ExoCrossfadeActivity : AppCompatActivity() {
             max = (durations / 1000).toInt()
             progress = (position / 1000).toInt()
         }
+
+        viewModel.autoNextSong(
+            (position / 1000).toInt(),
+            (durations / 1000).toInt(),
+            crossFadeDuration)
     }
 
     private fun playMusic(data: MusicPlaylist) {

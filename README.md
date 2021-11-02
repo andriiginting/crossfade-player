@@ -23,3 +23,9 @@ Tech Stack
 * Dagger Hilt for DI
 * Exoplayer
 * MediaPlayer
+
+License
+--------
+MIT License
+
+Copyright (c) 2021 Andri Ginting

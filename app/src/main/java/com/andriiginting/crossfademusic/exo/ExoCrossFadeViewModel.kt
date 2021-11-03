@@ -109,6 +109,11 @@ sealed class ExoCrossFadeViewState {
     data class ExoNextSong(val song: MusicPlaylist) : ExoCrossFadeViewState()
     data class ExoPreviousSong(val song: MusicPlaylist) : ExoCrossFadeViewState()
     data class ExoCurrentSong(val song: MusicPlaylist) : ExoCrossFadeViewState()
+    data class ExoCrossFadeSong(
+        val first: MusicPlaylist,
+        val startCrossFade: Long
+    ) : ExoCrossFadeViewState()
+
     data class ExoFooterView(
         val mainSong: MusicPlaylist,
         val suggestion: MusicPlaylist

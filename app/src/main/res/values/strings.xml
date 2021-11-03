@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Crossfade Music</string>
+    <string name="next_from">NEXT FROM %1s</string>
+    <string name="similar_to">Similar to %1s</string>
 </resources>

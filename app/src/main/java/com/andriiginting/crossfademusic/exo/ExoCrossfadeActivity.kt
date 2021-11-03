@@ -1,5 +1,6 @@
 package com.andriiginting.crossfademusic.exo
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,8 +10,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import com.andriiginting.crossfademusic.R
-import com.andriiginting.crossfademusic.data.CrossFadeClippingData
 import com.andriiginting.crossfademusic.data.player.CrossFadeProvider
+import com.andriiginting.crossfademusic.data.player.PreloadingCache
 import com.andriiginting.crossfademusic.databinding.ActivityExoCrossfadeBinding
 import com.andriiginting.crossfademusic.domain.MusicPlaylist
 import com.andriiginting.crossfademusic.util.Constant
@@ -38,6 +39,7 @@ class ExoCrossfadeActivity : AppCompatActivity() {
         bindingInst = ActivityExoCrossfadeBinding.inflate(layoutInflater)
 
         exoplayerInstance = CrossFadeProvider.crossFadeInstance(this)
+
         setContentView(binding.root)
         viewModel.initPlaylist()
         observePlaylist()
@@ -101,6 +103,7 @@ class ExoCrossfadeActivity : AppCompatActivity() {
                 is ExoCrossFadeViewState.ExoPlaylist -> {
                     Log.d("ExoCrossFade", "${states.playlist}")
                     addPlaylistItem(states.playlist)
+                    onPreloadingStarted(states.playlist)
                 }
                 ExoCrossFadeViewState.ExoPlaylistLoading -> {
                     //do nothing
@@ -123,6 +126,9 @@ class ExoCrossfadeActivity : AppCompatActivity() {
                 is ExoCrossFadeViewState.ExoFooterView -> {
                     bindFooterView(states.mainSong, states.suggestion)
                 }
+                is ExoCrossFadeViewState.ExoCrossFadeSong -> {
+                    //WIP
+                }
             }
         })
     }
@@ -141,8 +147,8 @@ class ExoCrossfadeActivity : AppCompatActivity() {
         suggestion: MusicPlaylist
     ) {
         with(binding.footerView) {
-            tvNextSongHeader.text = "NEXT FROM ${suggestion.artist}"
-            tvNextSongTitle.text = "Similar to ${mainSong.track}"
+            tvNextSongHeader.text = getString(R.string.next_from, suggestion.artist)
+            tvNextSongTitle.text = getString(R.string.similar_to, mainSong.track)
             ivNextSong.loadImage(suggestion.coverUrl)
         }
 
@@ -236,10 +242,14 @@ class ExoCrossfadeActivity : AppCompatActivity() {
             progress = (position / 1000).toInt()
         }
 
-        viewModel.autoNextSong(
-            (position / 1000).toInt(),
-            (durations / 1000).toInt(),
-            crossFadeDuration)
+        if (crossFadeDuration > 0) {
+            viewModel.autoNextSong(
+                (position / 1000).toInt(),
+                (durations / 1000).toInt(),
+                crossFadeDuration
+            )
+        }
+
     }
 
     private fun playMusic(data: MusicPlaylist) {
@@ -248,5 +258,11 @@ class ExoCrossfadeActivity : AppCompatActivity() {
             seekTo(viewModel.currentPosition, 0)
             play()
         }
+    }
+
+    private fun onPreloadingStarted(list: List<MusicPlaylist>) {
+        Intent(this, PreloadingCache::class.java).apply {
+            putStringArrayListExtra(PreloadingCache.KEY_LIST, ArrayList(list.map { it.musicUrl }))
+        }.also(::startService)
     }
 }

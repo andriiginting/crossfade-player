@@ -10,6 +10,7 @@ Main Feature
 - [x] Auto next
 - [x] Next Song
 - [x] Previous Song
+- [X] Preloading Cache
 - [ ] CrossFade effect
 - [ ] List of song
 

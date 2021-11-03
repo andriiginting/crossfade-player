@@ -1,10 +1,6 @@
 package com.andriiginting.crossfademusic.di
 
-import com.andriiginting.crossfademusic.data.CrossFadeRepository
-import com.andriiginting.crossfademusic.data.CrossFadeRepositoryImpl
 import com.andriiginting.crossfademusic.data.CrossFadeService
-import com.andriiginting.crossfademusic.domain.CrossFadeUseCase
-import com.andriiginting.crossfademusic.domain.CrossFadeUseCaseImpl
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module

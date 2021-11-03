@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.andriiginting.crossfademusic">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,8 +27,11 @@
         <activity
             android:exported="true"
             android:name=".mediaplayer.MainActivity"/>
-    </application>
 
-    <uses-permission android:name="android.permission.INTERNET" />
+        <service
+            android:enabled="true"
+            android:exported="false"
+            android:name=".data.player.PreloadingCache" />
+    </application>
 
 </manifest>

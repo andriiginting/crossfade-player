@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.andriiginting.crossfademusic.data.player.PlayerController
 import com.andriiginting.crossfademusic.domain.CrossFadeUseCase
 import com.andriiginting.crossfademusic.domain.MusicPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExoCrossFadeViewModel @Inject constructor(
-    private val useCase: CrossFadeUseCase
+    private val useCase: CrossFadeUseCase,
+    private val musicController: PlayerController
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
@@ -22,16 +24,18 @@ class ExoCrossFadeViewModel @Inject constructor(
     private val _state = MutableLiveData<ExoCrossFadeViewState>()
     val state: LiveData<ExoCrossFadeViewState> get() = _state
 
-    var currentPosition = -1
-    private val playlist = mutableListOf<MusicPlaylist>()
+    init {
+        initPlaylist()
+    }
 
-    fun initPlaylist() {
+    fun setupMusicPlayer(crossfade: Int) = musicController.init(crossfade)
+
+    private fun initPlaylist() {
         useCase.getPlaylist()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                playlist.addAll(it)
-                _state.value = ExoCrossFadeViewState.ExoPlaylist(it)
+                musicController.populatePlaylist(it)
                 _state.value = ExoCrossFadeViewState.ExoCurrentSong(it.first())
                 _state.value =
                     ExoCrossFadeViewState.ExoFooterView(
@@ -45,61 +49,34 @@ class ExoCrossFadeViewModel @Inject constructor(
             .let(compositeDisposable::add)
     }
 
-    fun onPlay(isPlaying: Boolean) {
-        if (!isPlaying) {
-            _state.value = ExoCrossFadeViewState.ExoTrackPlaying
-        } else {
-            _state.value = ExoCrossFadeViewState.ExoTrackStopped
+    fun onPlayOrStop() {
+        musicController.togglePlayback { state ->
+            Log.d("ExoCrossFade", "$state")
+            _state.value = state
         }
     }
 
-    fun getCurrentSong() {
-        if (playlist.isNotEmpty()) {
-            _state.value = ExoCrossFadeViewState.ExoCurrentSong(playlist[currentPosition])
-        }
-    }
-
-    fun updateCurrentPlaying(data: MusicPlaylist) {
-        currentPosition = playlist.indexOf(data)
-    }
-
-    fun autoNextSong(
-        currentDuration: Int,
-        duration: Int,
-        crossfade: Int
-    ) {
-        if (crossfade + currentDuration == duration) {
-            getNextSong()
-        }
+    fun seekTo(progress: Long) {
+        musicController.seekTo(progress)
     }
 
     fun getPreviousSong() {
-        currentPosition = if ((currentPosition - 1) < 0) playlist.lastIndex else currentPosition - 1
-        _state.value = ExoCrossFadeViewState.ExoPreviousSong(playlist[currentPosition])
-        _state.value = ExoCrossFadeViewState.ExoFooterView(
-            playlist[currentPosition], playlist[currentPosition + 1]
-        )
+        musicController.previousSong { state ->
+            _state.value = state
+            Log.d("crossfade-player", "#prevSong: ${state.song}")
+        }
     }
 
     fun getNextSong() {
-        if (playlist.isEmpty()) {
-            return
+        musicController.nextSong { state ->
+            Log.d("crossfade-player", "#nextSong: ${state.song}")
+            _state.value = state
         }
-
-        currentPosition = if ((currentPosition + 1) == playlist.size) {
-            0
-        } else {
-            currentPosition + 1
-        }
-
-        _state.value = ExoCrossFadeViewState.ExoNextSong(playlist[currentPosition])
-        _state.value = ExoCrossFadeViewState.ExoFooterView(
-            playlist[currentPosition], playlist[currentPosition + 1]
-        )
     }
 
     override fun onCleared() {
         super.onCleared()
+        musicController.release()
         compositeDisposable.clear()
     }
 }
@@ -109,10 +86,6 @@ sealed class ExoCrossFadeViewState {
     data class ExoNextSong(val song: MusicPlaylist) : ExoCrossFadeViewState()
     data class ExoPreviousSong(val song: MusicPlaylist) : ExoCrossFadeViewState()
     data class ExoCurrentSong(val song: MusicPlaylist) : ExoCrossFadeViewState()
-    data class ExoCrossFadeSong(
-        val first: MusicPlaylist,
-        val startCrossFade: Long
-    ) : ExoCrossFadeViewState()
 
     data class ExoFooterView(
         val mainSong: MusicPlaylist,
@@ -124,4 +97,5 @@ sealed class ExoCrossFadeViewState {
 
     object ExoTrackPlaying : ExoCrossFadeViewState()
     object ExoTrackStopped : ExoCrossFadeViewState()
+    object ExoTrackPaused : ExoCrossFadeViewState()
 }

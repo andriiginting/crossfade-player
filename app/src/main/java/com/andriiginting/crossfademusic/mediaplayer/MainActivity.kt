@@ -17,8 +17,7 @@ import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
-    private var bindingInst: ActivityMainBinding? = null
-    private val binding get() = bindingInst!!
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var mediaPlayer: MediaPlayer
     private var isPlaying = false
@@ -29,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bindingInst = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         mediaPlayer = MediaPlayer.create(this, R.raw.music_sample_1)
@@ -181,6 +180,5 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         viewModel.onDestroy()
-        bindingInst = null
     }
 }

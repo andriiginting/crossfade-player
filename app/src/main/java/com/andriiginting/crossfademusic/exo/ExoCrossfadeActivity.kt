@@ -1,52 +1,46 @@
 package com.andriiginting.crossfademusic.exo
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.widget.SeekBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import com.andriiginting.crossfademusic.R
-import com.andriiginting.crossfademusic.data.player.CrossFadeProvider
-import com.andriiginting.crossfademusic.data.player.PreloadingCache
 import com.andriiginting.crossfademusic.databinding.ActivityExoCrossfadeBinding
 import com.andriiginting.crossfademusic.domain.MusicPlaylist
 import com.andriiginting.crossfademusic.util.Constant
 import com.andriiginting.crossfademusic.util.loadImage
 import com.andriiginting.crossfademusic.util.setTransparentSystemBar
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class ExoCrossfadeActivity : AppCompatActivity() {
 
-    private var bindingInst: ActivityExoCrossfadeBinding? = null
-    private val binding get() = bindingInst!!
+    private lateinit var binding: ActivityExoCrossfadeBinding
 
-    private lateinit var exoplayerInstance: SimpleExoPlayer
     private val viewModel: ExoCrossFadeViewModel by viewModels()
 
     private var crossFadeDuration = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bindingInst = ActivityExoCrossfadeBinding.inflate(layoutInflater)
+        binding = ActivityExoCrossfadeBinding.inflate(layoutInflater)
 
-        exoplayerInstance = CrossFadeProvider.crossFadeInstance(this)
 
         setContentView(binding.root)
-        viewModel.initPlaylist()
         observePlaylist()
         setTransparentSystemBar()
+        bindView()
+        observeExtras()
+
+        viewModel.setupMusicPlayer(crossFadeDuration)
+    }
+
+    private fun bindView() {
 
         binding.ivPlayPause.setOnClickListener {
-            viewModel.onPlay(exoplayerInstance.isPlaying)
+            viewModel.onPlayOrStop()
         }
 
         binding.fabClosePlayer.setOnClickListener {
@@ -67,24 +61,12 @@ class ExoCrossfadeActivity : AppCompatActivity() {
             override fun onStartTrackingTouch(p0: SeekBar?) {}
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                exoplayerInstance.seekTo((seekBar.progress * 1000).toLong())
+                viewModel.seekTo(
+                    (seekBar.progress * 1000).toLong()
+                )
             }
 
         })
-
-        addPlayerListener()
-        observeExtras()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        bindingInst = null
-        exoplayerInstance.release()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        exoplayerInstance.stop()
     }
 
     private fun observeExtras() {
@@ -100,20 +82,11 @@ class ExoCrossfadeActivity : AppCompatActivity() {
                 is ExoCrossFadeViewState.ExoPlaylistError -> {
                     //do nothing
                 }
-                is ExoCrossFadeViewState.ExoPlaylist -> {
-                    Log.d("ExoCrossFade", "${states.playlist}")
-                    addPlaylistItem(states.playlist)
-                    onPreloadingStarted(states.playlist)
-                }
+
                 ExoCrossFadeViewState.ExoPlaylistLoading -> {
                     //do nothing
                 }
-                ExoCrossFadeViewState.ExoTrackPlaying -> {
-                    exoplayerInstance.play()
-                }
-                ExoCrossFadeViewState.ExoTrackStopped -> {
-                    exoplayerInstance.pause()
-                }
+
                 is ExoCrossFadeViewState.ExoNextSong -> {
                     bindSelectedTrack(states.song)
                 }
@@ -126,15 +99,23 @@ class ExoCrossfadeActivity : AppCompatActivity() {
                 is ExoCrossFadeViewState.ExoFooterView -> {
                     bindFooterView(states.mainSong, states.suggestion)
                 }
-                is ExoCrossFadeViewState.ExoCrossFadeSong -> {
-                    //WIP
+                is ExoCrossFadeViewState.ExoPlaylist -> {
+
+                }
+                is ExoCrossFadeViewState.ExoTrackPaused -> {
+                    toggleControlButton(false)
+                }
+                is ExoCrossFadeViewState.ExoTrackPlaying -> {
+                    toggleControlButton(true)
+                }
+                is ExoCrossFadeViewState.ExoTrackStopped -> {
+                    toggleControlButton(false)
                 }
             }
         })
     }
 
     private fun bindSelectedTrack(data: MusicPlaylist) {
-        playMusic(data)
         with(binding) {
             tvArtistName.text = data.artist
             tvSongTitle.text = data.track
@@ -152,43 +133,6 @@ class ExoCrossfadeActivity : AppCompatActivity() {
             ivNextSong.loadImage(suggestion.coverUrl)
         }
 
-    }
-
-    private fun addPlayerListener() {
-        exoplayerInstance.addListener(object : Player.Listener {
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                super.onIsPlayingChanged(isPlaying)
-                toggleControlButton(isPlaying)
-            }
-
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                super.onPlaybackStateChanged(playbackState)
-                //update seekbar
-                startAudioProgress()
-            }
-
-            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                super.onMediaItemTransition(mediaItem, reason)
-
-                viewModel.currentPosition = (mediaItem?.mediaId ?: "0").toInt()
-                viewModel.getCurrentSong()
-            }
-        })
-    }
-
-    private fun addPlaylistItem(playlist: List<MusicPlaylist>) {
-        exoplayerInstance.apply {
-            addMediaItems(
-                playlist.map { music ->
-                    MediaItem.Builder()
-                        .setMediaId(music.id.toString())
-                        .setUri(music.musicUrl)
-                        .build()
-                }
-            )
-
-            prepare()
-        }
     }
 
     private fun toggleControlButton(isPlaying: Boolean) {
@@ -209,20 +153,6 @@ class ExoCrossfadeActivity : AppCompatActivity() {
         }
     }
 
-    private fun startAudioProgress() {
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                updateSeekbar(
-                    exoplayerInstance.duration,
-                    exoplayerInstance.currentPosition
-                )
-
-                handler.postDelayed(this, 1000)
-            }
-        }, 0)
-    }
-
     private fun updateSeekbar(duration: Long, position: Long) {
         val durations = if (duration >= 0) duration else 0
 
@@ -241,28 +171,5 @@ class ExoCrossfadeActivity : AppCompatActivity() {
             max = (durations / 1000).toInt()
             progress = (position / 1000).toInt()
         }
-
-        if (crossFadeDuration > 0) {
-            viewModel.autoNextSong(
-                (position / 1000).toInt(),
-                (durations / 1000).toInt(),
-                crossFadeDuration
-            )
-        }
-
-    }
-
-    private fun playMusic(data: MusicPlaylist) {
-        viewModel.updateCurrentPlaying(data)
-        exoplayerInstance.apply {
-            seekTo(viewModel.currentPosition, 0)
-            play()
-        }
-    }
-
-    private fun onPreloadingStarted(list: List<MusicPlaylist>) {
-        Intent(this, PreloadingCache::class.java).apply {
-            putStringArrayListExtra(PreloadingCache.KEY_LIST, ArrayList(list.map { it.musicUrl }))
-        }.also(::startService)
     }
 }

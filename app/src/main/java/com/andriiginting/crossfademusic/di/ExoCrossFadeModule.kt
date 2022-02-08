@@ -2,6 +2,8 @@ package com.andriiginting.crossfademusic.di
 
 import com.andriiginting.crossfademusic.data.CrossFadeRepository
 import com.andriiginting.crossfademusic.data.CrossFadeRepositoryImpl
+import com.andriiginting.crossfademusic.data.player.MusicPlayerProvider
+import com.andriiginting.crossfademusic.data.player.MusicPlayerProviderImpl
 import com.andriiginting.crossfademusic.domain.CrossFadeUseCase
 import com.andriiginting.crossfademusic.domain.CrossFadeUseCaseImpl
 import dagger.Binds

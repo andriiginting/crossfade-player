@@ -1,7 +1,9 @@
 package com.andriiginting.crossfademusic.data.player
 
 import android.content.Context
+import android.media.session.MediaSession
 import android.net.Uri
+import android.support.v4.media.session.MediaSessionCompat
 import com.andriiginting.crossfademusic.data.CrossFadeClippingData
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.MediaItem
@@ -10,7 +12,10 @@ import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.ClippingMediaSource
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 
@@ -18,7 +23,7 @@ object CrossFadeProvider {
 
     fun crossFadeInstance(context: Context): SimpleExoPlayer {
         return SimpleExoPlayer.Builder(context)
-            .setAudioAttributes(getAudioAttributes(), true)
+            .setAudioAttributes(getAudioAttributes(), false)
             .setMediaSourceFactory(
                 DefaultMediaSourceFactory(provideCacheFactory(context))
             )
@@ -31,30 +36,14 @@ object CrossFadeProvider {
         .setUpstreamDataSourceFactory(provideHttpDataSource())
         .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
 
-    private fun provideHttpDataSource() = DefaultHttpDataSource.Factory()
+    fun provideHttpDataSource() = DefaultHttpDataSource.Factory()
         .setAllowCrossProtocolRedirects(true)
 
-    fun provideHlsMediaSource(url: String): HlsMediaSource {
-        return HlsMediaSource.Factory(DefaultHttpDataSource.Factory())
-            .createMediaSource(MediaItem.fromUri(Uri.parse(url)))
-    }
-
-    fun concatenatingMediaSource(
-        pairs: Pair<CrossFadeClippingData, CrossFadeClippingData>
-    ): ConcatenatingMediaSource {
-        val first = ClippingMediaSource(
-            pairs.first.mediaSource,
-            pairs.first.start,
-            pairs.first.end
+    fun provideMediaSession(context: Context): MediaSessionCompat {
+        return MediaSessionCompat.fromMediaSession(
+            context,
+            MediaSession(context, "com.andriiginting.crossfademusic.data.player")
         )
-
-        val second = ClippingMediaSource(
-            pairs.second.mediaSource,
-            pairs.second.start,
-            pairs.second.end
-        )
-
-        return ConcatenatingMediaSource(true, first, second)
     }
 
     private fun getAudioAttributes(): AudioAttributes {
